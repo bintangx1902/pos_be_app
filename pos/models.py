@@ -9,7 +9,7 @@ class UserProfile(models.Model):
 
 
 class Category(models.Model):
-    cate = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.cate
