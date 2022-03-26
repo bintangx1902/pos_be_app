@@ -62,7 +62,7 @@ class Order(models.Model):
     item = models.ManyToManyField(OrderItem)
     order_date = models.DateTimeField(null=True, blank=True)
     ordered = models.BooleanField(default=False)
-    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE)
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.user.username
