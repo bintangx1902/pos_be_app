@@ -12,7 +12,7 @@ class Category(models.Model):
     name = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.cate
+        return self.name
 
 
 class Product(models.Model):
@@ -40,15 +40,16 @@ class OrderItem(models.Model):
     item = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     ordered = models.BooleanField(default=False)
+    xtra_price = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.quantity} of {self.item.name}"
 
     def get_total_item_price(self):
-        return self.quantity * self.item.price
+        return self.quantity * self.item.price + self.xtra_price
 
     def get_total_item_discount_price(self):
-        return self.quantity * self.item.disc
+        return self.quantity * self.item.disc + self.xtra_price
 
     def get_final_price(self):
         if self.item.disc:

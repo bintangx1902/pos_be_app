@@ -18,12 +18,19 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
+from django.http import HttpResponse
+
+
+def front(request):
+    return HttpResponse("API Only")
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('static/<path>', serve, settings.STATIC_ROOT),
     path('media/<path>', serve, settings.MEDIA_ROOT),
+    path('', front)
 ]
 
 urlpatterns += [path('api/', include('pos.urls'))]
