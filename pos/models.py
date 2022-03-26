@@ -21,7 +21,7 @@ class Product(models.Model):
     price = models.FloatField(verbose_name='Real Price : ')
     disc = models.FloatField(null=True, blank=True, verbose_name='Discount price if desire : ')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='product/')
+    image = models.ImageField(upload_to='product/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} - Rp. {self.price}"
