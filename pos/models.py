@@ -70,7 +70,7 @@ class Order(models.Model):
     def get_total(self):
         total = 0
         for item in self.item.all():
-            total += item
+            total += item.get_final_price()
         if self.coupon:
             discount = self.coupon.discount / 100
             total -= (total * discount)
