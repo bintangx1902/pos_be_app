@@ -6,5 +6,5 @@ app_name = 'demo'
 
 
 urlpatterns = [
-    path('', landing, name='landing'),
+    path('', ShowMenu.as_view(), name='landing'),
 ]
