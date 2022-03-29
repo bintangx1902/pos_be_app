@@ -3,5 +3,31 @@
 {% block title %} Menu {% endblock %}
 
 {% block content %}
-Content Here
+<div class="row mx-auto my-5">
+    {% for menu in menus %}
+    <div class="col-3 col-lg-3 mx-auto">
+        <div class="card">
+            <div class="embed-responsive embed-responsive-16by9">
+                <img src="" alt="{{ menu.name }} Image" class="img-fluid embed-responsive-item">
+            </div>
+            <div class="card-body text-center">
+                <div class="h5 card-title">{{ menu.name }}</div>
+                <p class="card-text">{{ menu.price }}</p>
+                <div class="card-text">
+                    <div class="row mx-auto">
+                        <a href="" class="btn btn-primary col-2 ml-auto">-</a>
+                        <input type="text" class="form-control col-2" id="number{{ menu.pk }}">
+                        <a href="" class="btn btn-primary col-2 mr-auto">+</a>
+                    </div>
+                </div>
+                <p class="card-text mt-3">
+                    <input type="text" class="form-control" placeholder="Total Extra Price">
+                </p>
+                <a href="" class="btn btn-primary"> Add </a>
+<!--                p.card-text-->
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}
