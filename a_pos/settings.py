@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
 
     'rest_framework',
+    'demo',
     'pos',
 ]
 

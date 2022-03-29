@@ -21,19 +21,16 @@ from django.views.static import serve
 from django.http import HttpResponse
 
 
-def front(request):
-    return HttpResponse("API Only")
-
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('static/<path>', serve, settings.STATIC_ROOT),
     path('media/<path>', serve, settings.MEDIA_ROOT),
-    path('', front)
+    path('api/', include('pos.urls'))
 ]
 
-urlpatterns += [path('api/', include('pos.urls'))]
+
+urlpatterns += [path('', include('demo.urls', namespace='demo'))]
 
 if not settings.DEBUG or settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
