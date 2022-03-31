@@ -26,7 +26,7 @@
                         <td>{{ menu.quantity }}</td>
                         <td>{{ menu.xtra_price }}</td>
                         <td>
-                            {% if menu.item.discount %}
+                            {% if menu.item.disc %}
                             Rp. {{ menu.get_total_item_discount_price }} <small class="text-small text-secondary">Hemat Rp. {{ menu.get_amount_saved }}</small>
                             {% else %}
                             Rp. {{ menu.get_total_item_price }}
@@ -36,6 +36,22 @@
                         </td>
                     </tr>
                 {% endfor %}
+
+                {% if menus.get_total_amount_saved %}
+                    <tr>
+                        <td colspan="4"></td>
+                        <td colspan="">Total Price : </td>
+                        <td>Rp. {{ menus.get_total_amount_saved }}</td>
+                    </tr>
+                {% endif %}
+
+                {% if menus.get_total %}
+                    <tr>
+                        <td colspan="4"></td>
+                        <td colspan="">Total Price : </td>
+                        <td>Rp. {{ menus.get_total }}</td>
+                    </tr>
+                {% endif %}
                 </tbody>
             </table>
         </div>
