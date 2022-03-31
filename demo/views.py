@@ -1,8 +1,9 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import *
 from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 
 Menu = apps.get_model('pos', 'Product')
 OrderItem = apps.get_model('pos', 'OrderItem')
@@ -36,7 +37,17 @@ class AddItem(View):
         order_qs = Order.objects.filter(user=self.request.user, ordered=False)
         if order_qs.exists():
             order = order_qs[0]
-            if order.item.filter(item__link=)
+            if order.item.filter(item__link=item.link):
+                order_item += 1
+                order.item.save()
+            else:
+                order.item.add(order_item)
+        else:
+            ordered_date = timezone.now()
+            order = Order.objects.create(user=self.request.user, ordered_date=ordered_date)
+            order.item.add(order_item)
+
+        return redirect('/')
 
     @method_decorator(login_required(login_url='/accounts/login/'))
     def dispatch(self, request, *args, **kwargs):
