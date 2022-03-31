@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %} Menu {% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/counter.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="row mx-auto my-5">
@@ -13,21 +18,28 @@
             <div class="card-body text-center">
                 <div class="h5 card-title">{{ menu.name }}</div>
                 <p class="card-text">{{ menu.price }}</p>
-                <div class="card-text">
-                    <div class="row mx-auto">
-                        <a href="" class="btn btn-primary col-2 ml-auto">-</a>
-                        <input type="text" class="form-control col-2" id="number{{ menu.pk }}">
-                        <a href="" class="btn btn-primary col-2 mr-auto">+</a>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="card-text">
+                        <div class="row mx-auto">
+                            <button id="minus" class="btn btn-primary col-2 ml-auto minus">-</button>
+                            <input type="text" value="1" class="form-control col-2" id="number{{ menu.pk }}">
+                            <button id="plus" class="btn btn-primary col-2 mr-auto plus">+</button>
+                        </div>
                     </div>
-                </div>
-                <p class="card-text mt-3">
-                    <input type="text" class="form-control" placeholder="Total Extra Price">
-                </p>
-                <a href="" class="btn btn-primary"> Add </a>
+                    <p class="card-text mt-3">
+                        <input type="text" class="form-control" placeholder="Total Extra Price">
+                    </p>
+                    <button class="btn btn-primary"> Add </button>
+                </form>
 <!--                p.card-text-->
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/counter.js' %}"></script>
 {% endblock %}
