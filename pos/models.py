@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 
 class UserProfile(models.Model):
@@ -25,6 +26,9 @@ class Product(models.Model):
 
     def __str__(self):
         return f"{self.name} - Rp. {self.price}"
+
+    def add_item_to_cart(self):
+        return reverse('demo:add-item', kwargs={'link': self.link})
 
 
 class Coupon(models.Model):

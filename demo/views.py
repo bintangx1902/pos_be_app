@@ -26,8 +26,9 @@ class ShowMenu(ListView):
 
 
 class AddItem(View):
-    def post(self, format=None):
-        item = get_object_or_404(Menu, link=self.kwargs['link'])
+    def post(self, format=None, **kwargs):
+        item = get_object_or_404(Menu, link=kwargs['link'])
+        print(kwargs)
         order_item, created = OrderItem.objects.get_or_create(
             item=item,
             user=self.request.user,
@@ -38,8 +39,8 @@ class AddItem(View):
         if order_qs.exists():
             order = order_qs[0]
             if order.item.filter(item__link=item.link):
-                order_item += 1
-                order.item.save()
+                order_item.quantity += 1
+                order_item.save()
             else:
                 order.item.add(order_item)
         else:

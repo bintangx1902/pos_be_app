@@ -18,7 +18,7 @@
             <div class="card-body text-center">
                 <div class="h5 card-title">{{ menu.name }}</div>
                 <p class="card-text">{{ menu.price }}</p>
-                <form method="post">
+                <form method="post" action="{{ menu.add_item_to_cart }}">
                     {% csrf_token %}
                     <div class="card-text">
                         <div class="row mx-auto">
