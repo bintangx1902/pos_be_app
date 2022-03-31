@@ -20,7 +20,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     link = models.SlugField(max_length=255, unique=True)
     price = models.FloatField(verbose_name='Real Price : ')
-    disc = models.FloatField(null=True, blank=True, verbose_name='Discount price if desire : ')
+    disc = models.FloatField(default=0, null=True, blank=True, verbose_name='Discount price if desire : ')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='product/', null=True, blank=True)
 
@@ -50,9 +50,13 @@ class OrderItem(models.Model):
         return f"{self.quantity} of {self.item.name}"
 
     def get_total_item_price(self):
+        if not self.xtra_price:
+            return self.quantity * self.item.price
         return self.quantity * self.item.price + self.xtra_price
 
     def get_total_item_discount_price(self):
+        if not self.xtra_price:
+            return self.quantity * self.item.disc
         return self.quantity * self.item.disc + self.xtra_price
 
     def get_amount_saved(self):
