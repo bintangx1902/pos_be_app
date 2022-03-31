@@ -61,7 +61,7 @@ class OrderedItem(ListView):
     context_object_name = 'menus'
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user, ordered=False)
+        return Order.objects.filter(user=self.request.user, ordered=False)[0]
 
     @method_decorator(login_required(login_url='/accounts/login/'))
     def dispatch(self, request, *args, **kwargs):

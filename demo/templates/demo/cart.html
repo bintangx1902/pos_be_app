@@ -3,5 +3,42 @@
 {% block title %} Item  {% endblock %}
 
 {% block content %}
-
+<div class="row mx-auto my-5">
+    <div class="col-10 col-lg-10 mx-auto">
+        <div class="table-responsive">
+            <table class="table bg-white">
+                <thead class="table-info">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Item</th>
+                        <th scope="col">Price / Item</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Extra</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for menu in menus.item.all %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ menu.item.name }}</td>
+                        <td>{{ menu.item.price }}</td>
+                        <td>{{ menu.quantity }}</td>
+                        <td>{{ menu.xtra_price }}</td>
+                        <td>
+                            {% if menu.item.discount %}
+                            Rp. {{ menu.get_total_item_discount_price }} <small class="text-small text-secondary">Hemat Rp. {{ menu.get_amount_saved }}</small>
+                            {% else %}
+                            Rp. {{ menu.get_total_item_price }}
+                            {% endif %}
+                            &nbsp;
+                            <a href="" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}
