@@ -28,31 +28,45 @@ class ShowMenu(ListView):
 class AddItem(View):
     def post(self, format=None, **kwargs):
         item = get_object_or_404(Menu, link=kwargs['link'])
-        print(kwargs)
+        amount = self.request.POST.get('amount')
+        xtra = self.request.POST.get('xtra')
+
+        if not xtra:
+            xtra = 0
+
+        print(f"{amount} - {xtra}")
+
         order_item, created = OrderItem.objects.get_or_create(
             item=item,
             user=self.request.user,
-            ordered=False
+            ordered=False,
         )
 
         order_qs = Order.objects.filter(user=self.request.user, ordered=False)
         if order_qs.exists():
             order = order_qs[0]
             if order.item.filter(item__link=item.link):
-                order_item.quantity += 1
+                order_item.quantity = int(order_item.quantity) + int(amount)
+                order_item.xtra_price = float(order_item.xtra_price) + float(xtra)
                 order_item.save()
             else:
                 order.item.add(order_item)
+                order_item.quantity = amount
+                order_item.xtra_price = xtra
+                order_item.save()
         else:
             ordered_date = timezone.now()
             order = Order.objects.create(user=self.request.user, ordered_date=ordered_date)
             order.item.add(order_item)
+            order_item.quantity = amount
+            order_item.xtra_price = xtra
+            order_item.save()
 
         return redirect('/')
 
-    @method_decorator(login_required(login_url='/accounts/login/'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(AddItem, self).dispatch(request, *args, **kwargs)
+    # @method_decorator(login_required(login_url='/accounts/login/'))
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super(AddItem, self).dispatch(request, *args, **kwargs)
 
 
 class OrderedItem(ListView):
