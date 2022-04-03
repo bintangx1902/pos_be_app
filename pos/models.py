@@ -30,6 +30,9 @@ class Product(models.Model):
     def add_item_to_cart(self):
         return reverse('demo:add-item', kwargs={'link': self.link})
 
+    def remove_from_cart(self):
+        return reverse('demo:remove', kwargs={'link': self.link})
+
 
 class Coupon(models.Model):
     code = models.SlugField(unique=True)
@@ -63,7 +66,8 @@ class OrderItem(models.Model):
         return self.quantity * self.item.disc + self.xtra_price
 
     def get_amount_saved(self):
-        return (self.get_total_item_price() - self.xtra_price) - (self.get_total_item_discount_price() - self.xtra_price)
+        return (self.get_total_item_price() - self.xtra_price) - (
+                    self.get_total_item_discount_price() - self.xtra_price)
 
     def get_final_price(self):
         if self.item.disc:
