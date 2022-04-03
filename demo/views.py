@@ -80,3 +80,25 @@ class OrderedItem(ListView):
     @method_decorator(login_required(login_url='/accounts/login/'))
     def dispatch(self, request, *args, **kwargs):
         return super(OrderedItem, self).dispatch(request, *args, **kwargs)
+
+
+class RemoveFromCart(View):
+    def post(self, format=None, **kwargs):
+        item = get_object_or_404
+        order_qs = Order.objects.filter(user=self.request.user, ordered=False)
+        if order_qs.exists():
+            order = order_qs[0]
+            if order.item.filter(item__link=item.link).exists():
+                order_item = OrderItem.objects.filter(item=item, user=self.request.user, ordered=False)
+                order.item.remove(order_item)
+                order_item.delete()
+                # TODO : add messages "was removed"
+            else:
+                # TODO : add messages "item was not in cart"
+                pass
+        else:
+            # TODO : add messages "don have an active order"
+            pass
+
+        return redirect('demo:cart')
+
