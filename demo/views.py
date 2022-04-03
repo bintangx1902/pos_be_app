@@ -88,7 +88,7 @@ def remove_from_cart(request, link):
     if order_qs.exists():
         order = order_qs[0]
         if order.item.filter(item__link=item.link).exists():
-            order_item = OrderItem.objects.filter(item=item, user=request.user, ordered=False)
+            order_item = OrderItem.objects.filter(item=item, user=request.user, ordered=False)[0]   
             order.item.remove(order_item)
             order_item.delete()
             # TODO : add messages "was removed"
