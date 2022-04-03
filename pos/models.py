@@ -33,6 +33,9 @@ class Product(models.Model):
     def remove_from_cart(self):
         return reverse('demo:remove', kwargs={'link': self.link})
 
+    def reduce_item_from_cart(self):
+        return reverse('demo:reduce', kwargs={'link': self.link})
+
 
 class Coupon(models.Model):
     code = models.SlugField(unique=True)
