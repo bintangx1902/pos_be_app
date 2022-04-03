@@ -4,6 +4,7 @@ from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils import timezone
+from django.urls import reverse
 
 Menu = apps.get_model('pos', 'Product')
 OrderItem = apps.get_model('pos', 'OrderItem')
@@ -104,3 +105,24 @@ def remove_from_cart(request, link):
 
     return redirect('demo:cart')
 
+
+def reduce_item(request, link):
+    item = get_object_or_404(Menu, link=link)
+    order_qs = Order.objects.filter(user=request.user, ordered=False)
+    if order_qs.exists():
+        order = order_qs[0]
+        if order.item.filter(item__link=item.link).exists():
+            order_item = OrderItem.objects.filter(item=item, user=request.user, ordered=False)[0]
+            if order_item.quantity == 1:
+                return reverse('demo:remove', kwargs={'link': item.link})
+            order_item.quantity -= 1
+            order_item.save()
+            # TODO : add messages "was reduced"
+        else:
+            # TODO : add messages "was not in cart"
+            pass
+    else:
+        # TODO : add messages "dont have an active order"
+        pass
+
+    return redirect('demo:cart')
