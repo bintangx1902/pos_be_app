@@ -15,6 +15,7 @@
                         <th scope="col">Quantity</th>
                         <th scope="col">Extra</th>
                         <th scope="col">Total</th>
+                        <th scope="col">Remove</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,7 +24,11 @@
                         <th scope="row">{{ forloop.counter }}</th>
                         <td>{{ menu.item.name }}</td>
                         <td>{{ menu.item.price }}</td>
-                        <td>{{ menu.quantity }}</td>
+                        <td>
+                            <a href="" class="btn btn-danger">-</a>
+                            &nbsp;{{ menu.quantity }}&nbsp;
+                            <a href="" class="btn btn-primary">+</a>
+                        </td>
                         <td>{{ menu.xtra_price }}</td>
                         <td>
                             {% if menu.item.disc %}
@@ -32,6 +37,8 @@
                             Rp. {{ menu.get_total_item_price }}
                             {% endif %}
                             &nbsp;
+                        </td>
+                        <td>
                             <a href="" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                         </td>
                     </tr>
