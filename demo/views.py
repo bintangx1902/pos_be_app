@@ -30,8 +30,8 @@ class AddItem(View):
     def post(self, format=None, **kwargs):
         url = self.request.GET.get('url')
         item = get_object_or_404(Menu, link=kwargs['link'])
-        amount = self.request.POST.get('amount')
-        xtra = self.request.POST.get('xtra')
+        amount = int(self.request.POST.get('amount'))
+        xtra = float(self.request.POST.get('xtra'))
 
         if not xtra:
             xtra = 0
@@ -48,8 +48,8 @@ class AddItem(View):
         if order_qs.exists():
             order = order_qs[0]
             if order.item.filter(item__link=item.link):
-                order_item.quantity = int(order_item.quantity) + int(amount)
-                order_item.xtra_price = float(order_item.xtra_price) + float(xtra)
+                order_item.quantity = int(order_item.quantity) + amount
+                order_item.xtra_price = float(order_item.xtra_price) + xtra
                 order_item.save()
             else:
                 order.item.add(order_item)

@@ -27,7 +27,7 @@
                         <td>
                             <form action="{{ menu.item.add_item_to_cart }}?url={% url 'demo:cart' %}" method="post">
                                 {% csrf_token %}
-                                <a href="" class="btn btn-danger">-</a>
+                                <a href="{{ menu.item.reduce_item_from_cart }}" class="btn btn-danger">-</a>
                                 &nbsp;{{ menu.quantity }}&nbsp;
                                 <button class="btn btn-primary" name="amount" value="1">+</button>
                             </form>
