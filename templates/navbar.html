@@ -5,7 +5,7 @@
         <div class="collapse navbar-collapse" id="navbarScroll">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                    <a href="" class="nav-link"><i class="bi bi-cart"></i>{{ request.user | item_counter }}</a>
+                    <a href="{% url 'demo:cart' %}" class="nav-link"><i class="bi bi-cart"></i>{{ request.user | item_counter }}</a>
                 </li>
             </ul>
         </div>
