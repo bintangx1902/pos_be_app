@@ -25,9 +25,12 @@
                         <td>{{ menu.item.name }}</td>
                         <td>{{ menu.item.price }}</td>
                         <td>
-                            <a href="" class="btn btn-danger">-</a>
-                            &nbsp;{{ menu.quantity }}&nbsp;
-                            <a href="" class="btn btn-primary">+</a>
+                            <form action="{{ menu.item.add_item_to_cart }}?url={% url 'demo:cart' %}" method="post">
+                                {% csrf_token %}
+                                <a href="" class="btn btn-danger">-</a>
+                                &nbsp;{{ menu.quantity }}&nbsp;
+                                <button class="btn btn-primary" name="amount" value="1">+</button>
+                            </form>
                         </td>
                         <td>{{ menu.xtra_price }}</td>
                         <td>

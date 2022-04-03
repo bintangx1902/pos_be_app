@@ -27,6 +27,7 @@ class ShowMenu(ListView):
 
 class AddItem(View):
     def post(self, format=None, **kwargs):
+        url = self.request.GET.get('url')
         item = get_object_or_404(Menu, link=kwargs['link'])
         amount = self.request.POST.get('amount')
         xtra = self.request.POST.get('xtra')
@@ -62,6 +63,8 @@ class AddItem(View):
             order_item.xtra_price = xtra
             order_item.save()
 
+        if url:
+            return redirect(url)
         return redirect('/')
 
     @method_decorator(login_required(login_url='/accounts/login/'))
