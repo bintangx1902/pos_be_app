@@ -64,9 +64,9 @@ class AddItem(View):
 
         return redirect('/')
 
-    # @method_decorator(login_required(login_url='/accounts/login/'))
-    # def dispatch(self, request, *args, **kwargs):
-    #     return super(AddItem, self).dispatch(request, *args, **kwargs)
+    @method_decorator(login_required(login_url='/accounts/login/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(AddItem, self).dispatch(request, *args, **kwargs)
 
 
 class OrderedItem(ListView):
