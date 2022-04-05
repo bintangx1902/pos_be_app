@@ -10,6 +10,7 @@ from django.contrib import messages
 Menu = apps.get_model('pos', 'Product')
 OrderItem = apps.get_model('pos', 'OrderItem')
 Order = apps.get_model('pos', 'Order')
+Payment = apps.get_model('pos', 'Payment')
 
 
 class ShowMenu(ListView):
@@ -132,3 +133,13 @@ def reduce_item(request, link):
         pass
 
     return redirect('demo:cart')
+
+
+class SetPayment(View):
+    def post(self, format=None, **kwargs):
+
+        return
+
+    @method_decorator(login_required(login_url='/accounts/login/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(SetPayment, self).dispatch(request, *args, **kwargs)
