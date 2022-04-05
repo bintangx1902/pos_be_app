@@ -93,6 +93,7 @@ class OrderedItem(ListView):
         return super(OrderedItem, self).dispatch(request, *args, **kwargs)
 
 
+@login_required(login_url='/accounts/login/')
 def remove_from_cart(request, link):
     item = get_object_or_404(Menu, link=link)
     order_qs = Order.objects.filter(user=request.user, ordered=False)
@@ -113,6 +114,7 @@ def remove_from_cart(request, link):
     return redirect('demo:cart')
 
 
+@login_required(login_url='/accounts/login/')
 def reduce_item(request, link):
     item = get_object_or_404(Menu, link=link)
     order_qs = Order.objects.filter(user=request.user, ordered=False)
