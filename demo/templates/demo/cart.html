@@ -3,6 +3,7 @@
 {% block title %} Item  {% endblock %}
 
 {% block content %}
+{% include 'demo/payment.html' %}
 <div class="row mx-auto my-5">
     <div class="col-10 col-lg-10 mx-auto">
         <div class="table-responsive">
@@ -67,4 +68,9 @@
         </div>
     </div>
 </div>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalPayment">
+    Launch demo modal
+</button>
 {% endblock %}
