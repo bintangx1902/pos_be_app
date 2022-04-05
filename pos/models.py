@@ -102,3 +102,14 @@ class Order(models.Model):
             discount = self.coupon.discount / 100
             total -= (total * discount)
         return total
+
+
+class Payment(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    cash_in = models.FloatField()
+    cash_out = models.FloatField()
+    paid_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return
