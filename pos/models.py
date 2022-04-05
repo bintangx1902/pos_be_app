@@ -84,6 +84,7 @@ class Order(models.Model):
     order_date = models.DateTimeField(null=True, blank=True)
     ordered = models.BooleanField(default=False)
     coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE, null=True, blank=True)
+    slug = models.SlugField(default="")
 
     def __str__(self):
         return self.user.username
