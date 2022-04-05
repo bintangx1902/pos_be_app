@@ -17,6 +17,7 @@
 </head>
 
 <body>
+{% include 'modal.html' %}
 {% include 'navbar.html' %}
 {% block content %}
 {% endblock %}
@@ -31,5 +32,13 @@
         crossorigin="anonymous"></script>
 {% block js %}
 {% endblock %}
+
+{% if messages %}
+<script type="text/javascript">
+    $(window).on('load', function() {
+        $('#exampleModal').modal('show');
+    });
+</script>
+{% endif %}
 </body>
 </html>

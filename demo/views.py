@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.urls import reverse
+from django.contrib import messages
 
 Menu = apps.get_model('pos', 'Product')
 OrderItem = apps.get_model('pos', 'OrderItem')
@@ -33,10 +34,17 @@ class AddItem(View):
         amount = int(self.request.POST.get('amount'))
         xtra = self.request.POST.get('xtra')
 
-        if not xtra:
-            xtra = 0
-        else:
+        if not amount and not xtra:
+            messages.error(self.request, "Set one, amount or the extra price!")
+            return redirect('/')
+
+        elif not amount and xtra:
+            amount = 1
             xtra = float(xtra)
+
+        elif not xtra:
+
+            xtra = 0
 
         order_item, created = OrderItem.objects.get_or_create(
             item=item,
