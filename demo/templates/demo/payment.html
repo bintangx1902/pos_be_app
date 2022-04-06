@@ -10,8 +10,9 @@
             </div>
             <div class="modal-body">
                 <form method="post">
+                    {% load crispy_forms_tags %}
                     {% csrf_token %}
-                    {{ form.as_p }}
+                    {{ form | crispy }}
                 </form>
             </div>
             <div class="modal-footer">
