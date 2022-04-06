@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.urls import reverse
 from django.contrib import messages
-from .utils import slug_generator, check_link
+from .utils import slug_generator
 
 Menu = apps.get_model('pos', 'Product')
 OrderItem = apps.get_model('pos', 'OrderItem')
@@ -68,7 +68,12 @@ class AddItem(View):
         else:
             link = slug_generator(16)
             links = [x.slug for x in Order.objects.all()]
-            link = check_link(links, 16, link)
+            while True:
+                if link in links:
+                    link = slug_generator(16)
+                else:
+                    break
+
             order = Order.objects.create(user=self.request.user, order_date=timezone.now(), slug=link)
             order.item.add(order_item)
             order_item.quantity = amount
