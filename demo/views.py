@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.contrib import messages
 from .utils import slug_generator
+from .forms import PaymentForm
 
 Menu = apps.get_model('pos', 'Product')
 OrderItem = apps.get_model('pos', 'OrderItem')
@@ -99,7 +100,9 @@ class OrderedItem(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(OrderedItem, self).get_context_data(**kwargs)
+        form = PaymentForm
 
+        context['form'] = form
         return context
 
     @method_decorator(login_required(login_url='/accounts/login/'))
