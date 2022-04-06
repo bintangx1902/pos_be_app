@@ -10,7 +10,8 @@
             </div>
             <div class="modal-body">
                 <form method="post">
-                    ...
+                    {% csrf_token %}
+                    {{ form.as_p }}
                 </form>
             </div>
             <div class="modal-footer">
