@@ -97,6 +97,11 @@ class OrderedItem(ListView):
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user, ordered=False).first()
 
+    def get_context_data(self, **kwargs):
+        context = super(OrderedItem, self).get_context_data(**kwargs)
+
+        return context
+
     @method_decorator(login_required(login_url='/accounts/login/'))
     def dispatch(self, request, *args, **kwargs):
         return super(OrderedItem, self).dispatch(request, *args, **kwargs)
