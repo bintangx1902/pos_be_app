@@ -7,4 +7,4 @@ Payment = apps.get_model('pos', 'Payment')
 class PaymentForm(forms.ModelForm):
     class Meta:
         model = Payment
-        fields = '__all__'
+        fields = ['cash_in']

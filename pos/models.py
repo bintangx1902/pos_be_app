@@ -87,7 +87,7 @@ class Order(models.Model):
     slug = models.SlugField(default="")
 
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username} - {self.slug}"
 
     def get_total_amount_saved(self):
         total = 0
@@ -105,10 +105,10 @@ class Order(models.Model):
 
 
 class Payment(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    cash_in = models.FloatField()
-    cash_out = models.FloatField()
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    cash_in = models.FloatField(null=True)
+    cash_out = models.FloatField(null=True)
     paid_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

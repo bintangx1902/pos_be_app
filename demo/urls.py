@@ -11,4 +11,5 @@ urlpatterns = [
     path('cart/reduce/<slug:link>', reduce_item, name='reduce'),
     path('cart/remove/<slug:link>', remove_from_cart, name='remove'),
     path('add-item/<slug:link>', AddItem.as_view(), name='add-item'),
+    path('pay/<slug:slug>', SetPayment.as_view(), name='payment'),
 ]

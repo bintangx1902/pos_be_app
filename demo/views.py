@@ -156,8 +156,20 @@ def reduce_item(request, link):
 
 class SetPayment(View):
     def post(self, format=None, **kwargs):
-
-        return
+        cash_in = int(self.request.POST.get('cash_in'))
+        order = get_object_or_404(Order, slug=kwargs['slug'])
+        form = PaymentForm(self.request.POST or None)
+        if cash_in >= order.get_total():
+            if form.is_valid():
+                form.cash_out = cash_in - order.get_total()
+                form.order = order
+                form.user = self.request.user
+                form.save()
+                messages.info(self.request, f"Print Receipt, cash out : {cash_in - order.get_total()}")
+                return redirect('/')
+        else:
+            messages.info(self.request, f"uang anda kurang !")
+            return redirect('/cart')
 
     @method_decorator(login_required(login_url='/accounts/login/'))
     def dispatch(self, request, *args, **kwargs):
