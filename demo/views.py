@@ -161,10 +161,13 @@ class SetPayment(View):
         form = PaymentForm(self.request.POST or None)
         if cash_in >= order.get_total():
             if form.is_valid():
-                form.cash_out = cash_in - order.get_total()
-                form.order = order
-                form.user = self.request.user
-                form.save()
+                created = Payment(
+                    user=self.request.user,
+                    order=order,
+                    cash_in=cash_in,
+                    cash_out=cash_in-order.get_total()
+                )
+                created.save()
                 messages.info(self.request, f"Print Receipt, cash out : {cash_in - order.get_total()}")
                 return redirect('/')
         else:

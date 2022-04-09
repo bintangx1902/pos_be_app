@@ -112,4 +112,4 @@ class Payment(models.Model):
     paid_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return
+        return f"Payment - {self.order}"
