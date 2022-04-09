@@ -168,11 +168,13 @@ class SetPayment(View):
                     cash_out=cash_in-order.get_total()
                 )
                 created.save()
+                order.ordered = True
+                order.save()
                 messages.info(self.request, f"Print Receipt, cash out : {cash_in - order.get_total()}")
                 return redirect('/')
-        else:
-            messages.info(self.request, f"uang anda kurang !")
-            return redirect('/cart')
+
+        messages.info(self.request, f"uang anda kurang !")
+        return redirect('/cart')
 
     @method_decorator(login_required(login_url='/accounts/login/'))
     def dispatch(self, request, *args, **kwargs):
