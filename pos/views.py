@@ -114,13 +114,35 @@ class CartItem(APIView):
         return HttpResponseRedirect(reverse('pos:cart-item'))
 
 
+class RemoveItem(APIView):
+    def post(self, format=None, **kwargs):
+        data = self.request.data
+        item = data['item']
+        item = get_object_or_404(Product, pk=item)
+        order_qs = Order.objecsts.filter(user=self.request.user, ordered=False)
+        if order_qs.exists():
+            order = order_qs[0]
+            if order.item.filter(item__link=item.link).exists():
+                order_item = OrderItem.objects.filter(item=item, user=self.request.user, ordered=False)[0]
+                order.item.remove(order_item)
+                order_item.delete()
+                # TODO : add message "was removed"
+            else:
+                # TODO : add message "was not in cart"
+                pass
+        else:
+            # TODO : add message "dont have an active order"
+            pass
+        return
+
+
 class ReduceItem(APIView):
     def post(self, format=None, **kwargs):
         data = self.request.data
         item = data['item']
         amount = data['amount']
 
-        item = get_object_or_404(Product, item=item)
+        item = get_object_or_404(Product, pk=item)
         order_qs = Order.objects.filter(user=self.request.user, ordered=False)
         if order_qs.exists():
             order = order_qs[0]
