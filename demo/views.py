@@ -170,6 +170,11 @@ class SetPayment(View):
                 created.save()
                 order.ordered = True
                 order.save()
+
+                for item in order.item.all():
+                    item.ordered = True
+                    item.save()
+
                 messages.info(self.request, f"Print Receipt, cash out : {cash_in - order.get_total()}")
                 return redirect('/')
 
