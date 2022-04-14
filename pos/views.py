@@ -112,3 +112,29 @@ class CartItem(APIView):
         order_item.save()
         print(f"{item} - {amount} - {xtra}")
         return HttpResponseRedirect(reverse('pos:cart-item'))
+
+
+class ReduceItem(APIView):
+    def post(self, format=None, **kwargs):
+        data = self.request.data
+        item = data['item']
+        amount = data['amount']
+
+        item = get_object_or_404(Product, item=item)
+        order_qs = Order.objects.filter(user=self.request.user, ordered=False)
+        if order_qs.exists():
+            order = order_qs[0]
+            if order.item.filter(item__link=item.link).exists():
+                order_item = OrderItem.objects.filter(item=item, user=self.request.user, ordered=False).first()
+                if amount:
+                    order.quantity -= amount
+                else:
+                    order_item.quantity -= 1
+                order_item.save()
+            else:
+                # TODO : add messages
+                pass
+        else:
+            # TODO : add message "dont have an active order"
+            pass
+        return
