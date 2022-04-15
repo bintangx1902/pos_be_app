@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+import requests
 
 
 @api_view(['GET'])
@@ -110,7 +111,6 @@ class CartItem(APIView):
             order_item.xtra = xtra
 
         order_item.save()
-        print(f"{item} - {amount} - {xtra}")
         return HttpResponseRedirect(reverse('pos:cart-item'))
 
 
@@ -137,19 +137,22 @@ class RemoveItem(APIView):
 
 
 class ReduceItem(APIView):
-    def post(self, format=None, **kwargs):
+
+    def post(self, format=None):
         data = self.request.data
-        item = data['item']
-        amount = data['amount']
+        user = int(data['user'])
+        item = int(data['item'])
+        amount = int(data['amount'])
 
         item = get_object_or_404(Product, pk=item)
-        order_qs = Order.objects.filter(user=self.request.user, ordered=False)
+        order_qs = Order.objects.filter(user__pk=user, ordered=False)
         if order_qs.exists():
             order = order_qs[0]
             if order.item.filter(item__link=item.link).exists():
-                order_item = OrderItem.objects.filter(item=item, user=self.request.user, ordered=False).first()
+                order_item = OrderItem.objects.filter(item=item, user__pk=user, ordered=False).first()
+                # if amount is left 1  delete the object
                 if amount:
-                    order.quantity -= amount
+                    order_item.quantity -= amount
                 else:
                     order_item.quantity -= 1
                 order_item.save()
@@ -159,4 +162,12 @@ class ReduceItem(APIView):
         else:
             # TODO : add message "dont have an active order"
             pass
-        return
+
+        # get item data
+
+        order = Order.objects.filter(user__pk=user, ordered=False).first()
+        if order:
+            order = order.item.all()
+
+        serializer = OrderItemSerializer(order, many=True)
+        return Response(serializer.data)
