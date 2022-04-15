@@ -8,7 +8,10 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-import requests
+import requests, datetime, jwt
+from rest_framework import status
+from rest_framework.exceptions import AuthenticationFailed
+
 
 
 @api_view(['GET'])
@@ -19,6 +22,43 @@ def api_landing(request):
         'cart item': '/api/item',
     }
     return Response(data)
+
+
+class LoginEndPoint(APIView):
+    def get(self, format=None):
+        token = self.request.GET.get('token')
+        if token:
+            response = Response()
+            response.data = {
+                'token': token
+            }
+            return response
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def post(self, format=None):
+        data = self.request.data
+        username = data['username']
+        password = data['password']
+
+        user = User.objects.filter(username=username).first()
+        if not user:
+            raise AuthenticationFailed("user not found")
+        user = get_object_or_404(User, username=username)
+        if not user.check_password(password):
+            raise AuthenticationFailed("Wrong password !")
+
+        payload = {
+            'id': user.id,
+            'iat': datetime.datetime.utcnow()
+        }
+        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        response = Response()
+        response.set_cookie(key='jwt', value=token)
+        response.data = {
+            'token': token
+        }
+
+        return response
 
 
 class ProductAPI(APIView):
@@ -137,6 +177,9 @@ class RemoveItem(APIView):
 
 
 class ReduceItem(APIView):
+
+    def get(self, format=None):
+        return
 
     def post(self, format=None):
         data = self.request.data
