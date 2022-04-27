@@ -13,15 +13,33 @@ from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 
 
-
 @api_view(['GET'])
 def api_landing(request):
     data = {
+        'login': '/api/login',
+        'cart item': '/api/item',
         'product': '/api/product',
         'category': '/api/category',
-        'cart item': '/api/item',
+        'delete item': '/api/delete-item',
+        'reduce item': '/api/reduce-item'
+
     }
+    a = request.build_absolute_uri()
+    print(a.split('/'))
     return Response(data)
+
+
+def payloads(token):
+    try:
+        payload = jwt.decode(token, 'secret', algorithms='HS256')
+    except jwt.ExpiredSignatureError:
+        raise AuthenticationFailed("Un Authenticated")
+
+    return payload
+
+
+def this_user(payload):
+    return get_object_or_404(User, id=payload['id'])
 
 
 class LoginEndPoint(APIView):
@@ -179,9 +197,19 @@ class RemoveItem(APIView):
 class ReduceItem(APIView):
 
     def get(self, format=None):
-        return
+        token = self.request.GET.get('token')
+        if not token:
+            raise AuthenticationFailed("Un Authenticated", status.HTTP_403_FORBIDDEN)
+        payload = payloads(token)
+        user = this_user(payload)
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data)
 
     def post(self, format=None):
+        token = self.request.GET.get('token')
+        if not token:
+            raise AuthenticationFailed("Un Authenticated", status.HTTP_403_FORBIDDEN)
+
         data = self.request.data
         user = int(data['user'])
         item = int(data['item'])
@@ -193,7 +221,7 @@ class ReduceItem(APIView):
             order = order_qs[0]
             if order.item.filter(item__link=item.link).exists():
                 order_item = OrderItem.objects.filter(item=item, user__pk=user, ordered=False).first()
-                # if amount is left 1  delete the object
+                # TODO : if amount is left 1  delete the object
                 if amount:
                     order_item.quantity -= amount
                 else:
