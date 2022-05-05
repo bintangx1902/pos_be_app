@@ -174,14 +174,22 @@ class CartItem(APIView):
 
 class RemoveItem(APIView):
     def post(self, format=None, **kwargs):
+        token = self.request.GET.get('token')
+        if not token:
+            return AuthenticationFailed('Un Authenticated', status.HTTP_403_FORBIDDEN)
+        payload = payloads(token)
+        user = this_user(payload)
+        if not user:
+            return AuthenticationFailed('User not detected', status.HTTP_403_FORBIDDEN)
+
         data = self.request.data
         item = data['item']
         item = get_object_or_404(Product, pk=item)
-        order_qs = Order.objecsts.filter(user=self.request.user, ordered=False)
+        order_qs = Order.objects.filter(user=user, ordered=False)
         if order_qs.exists():
             order = order_qs[0]
             if order.item.filter(item__link=item.link).exists():
-                order_item = OrderItem.objects.filter(item=item, user=self.request.user, ordered=False)[0]
+                order_item = OrderItem.objects.filter(item=item, user=user, ordered=False).first()
                 order.item.remove(order_item)
                 order_item.delete()
                 # TODO : add message "was removed"
@@ -204,6 +212,14 @@ class ReduceItem(APIView):
         user = this_user(payload)
         serializer = UserSerializer(user, many=False)
         return Response(serializer.data)
+
+    def send(self, links):
+        url: str = self.request.build_absolute_uri()
+        uri = url.split('/')
+        build = f"{uri[0]}//{uri[2]}/{uri[3]}/{links}"
+        token = self.request.GET.get('token')
+
+
 
     def post(self, format=None):
         token = self.request.GET.get('token')
