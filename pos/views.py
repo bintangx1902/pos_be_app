@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializrers import *
@@ -122,7 +122,15 @@ class CategoryAPI(APIView):
 
 class CartItem(APIView):
     def get(self, format=None, **kwargs):
-        order = Order.objects.filter(user=self.request.user, ordered=False).first()
+        token = self.request.GET.get('token')
+        if not token:
+            raise AuthenticationFailed("Authentication Failed")
+        payload = payloads(token)
+        user = this_user(payload)
+        if not user:
+            raise AuthenticationFailed("User not found ! ")
+
+        order = Order.objects.filter(user=user, ordered=False).first()
         if order:
             order = order.item.all()
 
@@ -199,7 +207,13 @@ class RemoveItem(APIView):
         else:
             # TODO : add message "dont have an active order"
             pass
-        return
+        # return redirect(reverse('pos:cart-item') + f"?token={token}")
+        response = Response()
+        response.data = {
+            'item': '',
+        }
+        response.status_code = status.HTTP_202_ACCEPTED
+        return response
 
 
 class ReduceItem(APIView):

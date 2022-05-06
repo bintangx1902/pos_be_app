@@ -8,12 +8,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'last_login']
 
 
-class OrderItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderItem
-        fields = '__all__'
-
-
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
