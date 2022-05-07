@@ -138,8 +138,16 @@ class CartItem(APIView):
         return Response(serializer.data)
 
     def post(self, format=None, **kwargs):
+        token = self.request.GET.get('token')
+        if not token:
+            raise AuthenticationFailed('Authentication Failed !')
+        payload = payloads(token)
+        user = this_user(payload)
+        if not user:
+            raise AuthenticationFailed("User not found !")
+
         data = self.request.data
-        item = float(data['item'])
+        item = int(data['item'])
         amount = float(data['amount'])
         xtra = float(data['xtra'])
 
@@ -147,7 +155,7 @@ class CartItem(APIView):
 
         if not amount and not xtra:
             # TODO : add messages
-            return HttpResponseRedirect(reverse('/'))
+            return Response({"error": "amount and extra didn't declared well! "})
         elif not amount and xtra:
             amount = 1
         elif not xtra:
@@ -155,29 +163,29 @@ class CartItem(APIView):
 
         order_item, created = OrderItem.objects.get_or_create(
             item=item,
-            user=self.request.user,
+            user=user,
             ordered=False
         )
 
-        order_qs = Order.objects.filter(user=self.request.user, ordered=False)
+        order_qs = Order.objects.filter(user=user, ordered=False)
         if order_qs.exists():
             order = order_qs[0]
             if order.item.filter(item__link=item.link).exists():
                 order_item.quantity += amount
-                order_item.xtra += xtra
+                order_item.xtra_price += xtra
             else:
                 order.item.add(order_item)
                 order_item.quantity = amount
-                order_item.xtra = xtra
+                order_item.xtra_price = xtra
         else:
             # TODO : Create links
-            order = Order.objects.create(user=self.request.user, order_date=timezone.now(), slug=None)
+            order = Order.objects.create(user=user, order_date=timezone.now(), slug=None)
             order.item.add(order_item)
             order_item.quantity = amount
-            order_item.xtra = xtra
+            order_item.xtra_price = xtra
 
         order_item.save()
-        return HttpResponseRedirect(reverse('pos:cart-item'))
+        return self.get()
 
 
 class RemoveItem(APIView):
