@@ -208,9 +208,11 @@ class RemoveItem(APIView):
             # TODO : add message "dont have an active order"
             pass
         # return redirect(reverse('pos:cart-item') + f"?token={token}")
+
+        serializer = ProductSerializer(item, many=False)
         response = Response()
         response.data = {
-            'item': '',
+            'deleted-item': serializer.data,
         }
         response.status_code = status.HTTP_202_ACCEPTED
         return response
@@ -227,13 +229,13 @@ class ReduceItem(APIView):
         serializer = UserSerializer(user, many=False)
         return Response(serializer.data)
 
-    def send(self, links):
+    def send(self, links, token, item):
         url: str = self.request.build_absolute_uri()
         uri = url.split('/')
         build = f"{uri[0]}//{uri[2]}/{uri[3]}/{links}"
-        token = self.request.GET.get('token')
-
-
+        data = {'item': item}
+        req = requests.post(url=build, data=data, params={'token': token})
+        return req
 
     def post(self, format=None):
         token = self.request.GET.get('token')
@@ -244,6 +246,7 @@ class ReduceItem(APIView):
         user = int(data['user'])
         item = int(data['item'])
         amount = int(data['amount'])
+        deleted = None
 
         item = get_object_or_404(Product, pk=item)
         order_qs = Order.objects.filter(user__pk=user, ordered=False)
@@ -252,10 +255,13 @@ class ReduceItem(APIView):
             if order.item.filter(item__link=item.link).exists():
                 order_item = OrderItem.objects.filter(item=item, user__pk=user, ordered=False).first()
                 # TODO : if amount is left 1  delete the object
-                if amount:
-                    order_item.quantity -= amount
+                if order_item.quantity == 1:
+                    deleted = self.send("delete-item", token, item.pk)
                 else:
-                    order_item.quantity -= 1
+                    if amount:
+                        order_item.quantity -= amount
+                    else:
+                        order_item.quantity -= 1
                 order_item.save()
             else:
                 # TODO : add messages
@@ -271,4 +277,15 @@ class ReduceItem(APIView):
             order = order.item.all()
 
         serializer = OrderItemSerializer(order, many=True)
-        return Response(serializer.data)
+        response = Response()
+        if deleted is not None:
+            response.data = {
+                'item': serializer.data,
+                'deleted-item': deleted.json(),
+                'status': deleted.status_code
+            }
+        else:
+            response.data = {
+                'item': serializer.data,
+            }
+        return response
