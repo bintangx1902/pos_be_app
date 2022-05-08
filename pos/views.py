@@ -154,7 +154,6 @@ class CartItem(APIView):
         item = get_object_or_404(Product, pk=item)
 
         if not amount and not xtra:
-            # TODO : add messages
             return Response({"error": "amount and extra didn't declared well! "})
         elif not amount and xtra:
             amount = 1
