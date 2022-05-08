@@ -155,10 +155,6 @@ class CartItem(APIView):
 
         if not amount and not xtra:
             return Response({"error": "amount and extra didn't declared well! "})
-        elif not amount and xtra:
-            amount = 1
-        elif not xtra:
-            xtra = 0
 
         order_item, created = OrderItem.objects.get_or_create(
             item=item,
@@ -172,7 +168,10 @@ class CartItem(APIView):
             if order.item.filter(item__link=item.link).exists():
                 order_item.quantity += amount
                 order_item.xtra_price += xtra
+                if order_item.xtra_price < 0 : order_item.xtra_price = 0
             else:
+                if not amount:
+                    amount = 1
                 order.item.add(order_item)
                 order_item.quantity = amount
                 order_item.xtra_price = xtra
