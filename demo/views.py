@@ -41,14 +41,6 @@ class AddItem(View):
             messages.error(self.request, "Set one, amount or the extra price!")
             return redirect('/')
 
-        elif not amount and xtra:
-            amount = 1
-            xtra = float(xtra)
-
-        elif not xtra:
-
-            xtra = 0
-
         order_item, created = OrderItem.objects.get_or_create(
             item=item,
             user=self.request.user,
@@ -57,12 +49,16 @@ class AddItem(View):
 
         order_qs = Order.objects.filter(user=self.request.user, ordered=False)
         if order_qs.exists():
+            if not xtra:
+                xtra = 0
             order = order_qs[0]
             if order.item.filter(item__link=item.link):
                 order_item.quantity += amount
-                order_item.xtra_price += xtra
+                order_item.xtra_price += float(xtra)
                 order_item.save()
             else:
+                if not amount:
+                    amount = 1
                 order.item.add(order_item)
                 order_item.quantity = amount
                 order_item.xtra_price = xtra
@@ -140,7 +136,7 @@ def reduce_item(request, link):
         if order.item.filter(item__link=item.link).exists():
             order_item = OrderItem.objects.filter(item=item, user=request.user, ordered=False)[0]
             if order_item.quantity == 1:
-                return reverse('demo:remove', kwargs={'link': item.link})
+                return redirect(reverse('demo:remove', kwargs={'link': item.link}))
             order_item.quantity -= 1
             order_item.save()
             # TODO : add messages "was reduced"
