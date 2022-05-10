@@ -46,9 +46,13 @@ class LoginEndPoint(APIView):
     def get(self, format=None):
         token = self.request.GET.get('token')
         if token:
+            payload = payloads(token)
+            user = this_user(payload)
+            serializer = UserSerializer(user, many=False)
             response = Response()
             response.data = {
-                'token': token
+                'token': token,
+                'user': serializer.data
             }
             return response
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -167,6 +171,7 @@ class CartItem(APIView):
             order = order_qs[0]
             if order.item.filter(item__link=item.link).exists():
                 order_item.quantity += amount
+                if order_item.quantity < 1 : order_item.quantity = 1
                 order_item.xtra_price += xtra
                 if order_item.xtra_price < 0 : order_item.xtra_price = 0
             else:
